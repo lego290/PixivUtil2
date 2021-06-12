@@ -309,6 +309,9 @@ def get_remote_filesize(url, referer, config, notifier=None):
     if notifier is None:
         notifier = PixivHelper.dummy_notifier
 
+    if config.blacklistFileNames != "":
+        return -1
+
     PixivHelper.print_and_log(None, 'Getting remote filesize...')
     # open with HEAD method, might be expensive
     req = PixivHelper.create_custom_request(url, config, referer, head=True)
