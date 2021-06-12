@@ -15,6 +15,14 @@ import PixivHelper
 script_path = PixivHelper.module_path()
 
 
+def validateRegex(text):
+    try:
+        re.compile(text)
+        return True
+    except re.error:
+        return False
+
+
 class ConfigItem():
     section = None
     option = None
@@ -102,7 +110,7 @@ class PixivConfig():
         ConfigItem("Settings",
                    "blacklistFileNames",
                    "",
-                   restriction=PixivConfig.validateRegex,
+                   restriction=validateRegex,
                    error_message="Invalid regex string"),
 
         ConfigItem("Filename",
@@ -211,14 +219,6 @@ class PixivConfig():
         for item in self.__items:
             setattr(self, item.option, item.process_value(item.default))
         self.proxy = {'http': self.proxyAddress, 'https': self.proxyAddress}
-
-    @staticmethod
-    def validateRegex(text):
-        try:
-            re.compile(text)
-            return True
-        except re.error:
-            return False
 
     def loadConfig(self, path=None):
         if path is not None:
