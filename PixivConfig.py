@@ -3,6 +3,7 @@ import configparser
 import itertools
 import os
 import os.path
+import re
 import shutil
 import sys
 import time
@@ -98,6 +99,11 @@ class PixivConfig():
         ConfigItem("Settings", "dbPath", ""),
         ConfigItem("Settings", "setLastModified", True),
         ConfigItem("Settings", "useLocalTimezone", False),
+        ConfigItem("Settings",
+                   "blacklistFileNames",
+                   "",
+                   restriction=PixivConfig.validateRegex,
+                   error_message="Invalid regex string"),
 
         ConfigItem("Filename",
                    "filenameFormat",
@@ -205,6 +211,14 @@ class PixivConfig():
         for item in self.__items:
             setattr(self, item.option, item.process_value(item.default))
         self.proxy = {'http': self.proxyAddress, 'https': self.proxyAddress}
+
+    @staticmethod
+    def validateRegex(text):
+        try:
+            re.compile(text)
+            return True
+        except re.error:
+            return False
 
     def loadConfig(self, path=None):
         if path is not None:
