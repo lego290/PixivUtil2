@@ -274,37 +274,38 @@ def process_image(caller,
                     PixivHelper.print_and_log(None, '')
 
             if config.writeImageInfo or config.writeImageJSON:
-                filename_info_format = config.filenameInfoFormat or config.filenameFormat
-                # Issue #575
-                if image.imageMode == 'manga':
-                    filename_info_format = config.filenameMangaInfoFormat or config.filenameMangaFormat or filename_info_format
-                info_filename = PixivHelper.make_filename(filename_info_format,
-                                                          image,
-                                                          tagsSeparator=config.tagsSeparator,
-                                                          tagsLimit=config.tagsLimit,
-                                                          fileUrl=url,
-                                                          appendExtension=False,
-                                                          bookmark=bookmark,
-                                                          searchTags=search_tags,
-                                                          useTranslatedTag=config.useTranslatedTag,
-                                                          tagTranslationLocale=config.tagTranslationLocale)
-                info_filename = PixivHelper.sanitize_filename(info_filename, target_dir)
-                # trim _pXXX
-                info_filename = re.sub(r'_p?\d+$', '', info_filename)
-                if config.writeImageInfo:
-                    image.WriteInfo(info_filename + ".txt")
-                if config.writeImageJSON:
-                    image.WriteJSON(info_filename + ".json", config.RawJSONFilter)
-                if config.includeSeriesJSON and image.seriesNavData and image.seriesNavData['seriesId'] not in caller.__seriesDownloaded:
-                    json_filename = PixivHelper.make_filename(config.filenameSeriesJSON,
+                if re.search(config.blacklistFileNames, filename) is not None:
+                    filename_info_format = config.filenameInfoFormat or config.filenameFormat
+                    # Issue #575
+                    if image.imageMode == 'manga':
+                        filename_info_format = config.filenameMangaInfoFormat or config.filenameMangaFormat or filename_info_format
+                    info_filename = PixivHelper.make_filename(filename_info_format,
                                                               image,
+                                                              tagsSeparator=config.tagsSeparator,
+                                                              tagsLimit=config.tagsLimit,
                                                               fileUrl=url,
-                                                              appendExtension=False
-                                                              )
-                    json_filename = PixivHelper.sanitize_filename(json_filename, target_dir)
+                                                              appendExtension=False,
+                                                              bookmark=bookmark,
+                                                              searchTags=search_tags,
+                                                              useTranslatedTag=config.useTranslatedTag,
+                                                              tagTranslationLocale=config.tagTranslationLocale)
+                    info_filename = PixivHelper.sanitize_filename(info_filename, target_dir)
                     # trim _pXXX
-                    json_filename = re.sub(r'_p?\d+$', '', json_filename)
-                    image.WriteSeriesData(image.seriesNavData['seriesId'], caller.__seriesDownloaded, json_filename + ".json")
+                    info_filename = re.sub(r'_p?\d+$', '', info_filename)
+                    if config.writeImageInfo:
+                        image.WriteInfo(info_filename + ".txt")
+                    if config.writeImageJSON:
+                        image.WriteJSON(info_filename + ".json", config.RawJSONFilter)
+                    if config.includeSeriesJSON and image.seriesNavData and image.seriesNavData['seriesId'] not in caller.__seriesDownloaded:
+                        json_filename = PixivHelper.make_filename(config.filenameSeriesJSON,
+                                                                  image,
+                                                                  fileUrl=url,
+                                                                  appendExtension=False
+                                                                  )
+                        json_filename = PixivHelper.sanitize_filename(json_filename, target_dir)
+                        # trim _pXXX
+                        json_filename = re.sub(r'_p?\d+$', '', json_filename)
+                        image.WriteSeriesData(image.seriesNavData['seriesId'], caller.__seriesDownloaded, json_filename + ".json")
 
             if image.imageMode == 'ugoira_view':
                 if config.writeUgoiraInfo:

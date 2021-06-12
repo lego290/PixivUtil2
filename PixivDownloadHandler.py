@@ -2,6 +2,7 @@
 import codecs
 import gc
 import os
+import re
 import sys
 import time
 import traceback
@@ -55,6 +56,9 @@ def download_image(caller,
 
     if not caller.UTF8_FS:
         filename_save = filename.encode('utf-8')  # For file operations, force the usage of a utf-8 encode filename
+
+    if re.search(config.blacklistFileNames, filename_save) is not None:
+        return (PixivConstant.PIXIVUTIL_OK, filename_save)
 
     while retry_count <= max_retry:
         res = None
