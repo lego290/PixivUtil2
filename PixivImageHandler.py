@@ -274,7 +274,7 @@ def process_image(caller,
                     PixivHelper.print_and_log(None, '')
 
             if config.writeImageInfo or config.writeImageJSON:
-                if re.search(config.blacklistFileNames, filename) is not None:
+                if re.search(config.blacklistFileNames, filename) is None:
                     filename_info_format = config.filenameInfoFormat or config.filenameFormat
                     # Issue #575
                     if image.imageMode == 'manga':
