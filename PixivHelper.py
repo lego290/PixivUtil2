@@ -372,7 +372,9 @@ def set_console_title(title):
             subprocess.call('title' + ' ' + title, shell=True)
         except FileNotFoundError:
             print_and_log("error", f"Cannot set console title to {title}")
-    else:
+    # Workaround: Crash when failing to set console title
+    elif False:
+    # else:
         sys.stdout.write(f'\33]0;{title}\a')
         sys.stdout.flush()
 
